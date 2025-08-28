@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2><i class="bi bi-search"></i> Find Your Journey</h2>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Type</label>
+                {{ form.type }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">From</label>
+                {{ form.source }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To</label>
+                {{ form.destination }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Date</label>
+                {{ form.date }}
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a href="{% url 'bookings:travel_list' %}" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Travel Options -->
+{% if page_obj %}
+<div class="row">
+    {% for travel in page_obj %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-primary">{{ travel.get_type_display }}</span>
+                    <h5 class="text-success">${{ travel.price }}</h5>
+                </div>
+                
+                <h6>{{ travel.source }} → {{ travel.destination }}</h6>
+                <p class="text-muted mb-2">
+                    <i class="bi bi-calendar"></i> {{ travel.date_time|date:"M d, Y H:i" }}
+                </p>
+                <p class="text-muted">
+                    <i class="bi bi-people"></i> {{ travel.available_seats }} seats available
+                </p>
+            </div>
+            <div class="card-footer">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'bookings:book_travel' travel.id %}" class="btn btn-primary btn-sm">Book Now</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-sm">Login to Book</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        
+        <li class="page-item active">
+            <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-search display-1 text-muted"></i>
+    <h4>No travel options found</h4>
+    <p class="text-muted">Try adjusting your search criteria.</p>
+</div>
+{% endif %}
+{% endblock %}

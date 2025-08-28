@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-ticket"></i> Book Your Journey</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Number of Seats</label>
+                        {{ form.number_of_seats }}
+                        {% if form.number_of_seats.help_text %}
+                        <div class="form-text">{{ form.number_of_seats.help_text }}</div>
+                        {% endif %}
+                        {% if form.number_of_seats.errors %}
+                        <div class="text-danger">{{ form.number_of_seats.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Total Price: $<span id="total">{{ travel.price }}</span></strong>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                    <a href="{% url 'bookings:travel_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Journey Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>{{ travel.get_type_display }}</h6>
+                <p><strong>Route:</strong> {{ travel.source }} → {{ travel.destination }}</p>
+                <p><strong>Date:</strong> {{ travel.date_time|date:"M d, Y" }}</p>
+                <p><strong>Time:</strong> {{ travel.date_time|time:"H:i" }}</p>
+                <p><strong>Price:</strong> ${{ travel.price }} per seat</p>
+                <p><strong>Available:</strong> {{ travel.available_seats }} seats</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seatsInput = document.querySelector('input[name="number_of_seats"]');
+    const totalSpan = document.getElementById('total');
+    const pricePerSeat = {{ travel.price }};
+    
+    seatsInput.addEventListener('input', function() {
+        const seats = parseInt(this.value) || 1;
+        totalSpan.textContent = (seats * pricePerSeat).toFixed(2);
+    });
+});
+</script>
+{% endblock %}
