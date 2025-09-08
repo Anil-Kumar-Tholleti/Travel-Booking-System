@@ -170,3 +170,7 @@ This project focuses on:
 - ✅ Ready to run after `migrate`
 - ✅ Proper form validation
 - ✅ Atomic booking transactions
+## 🔖 Languages Used
+![Python](https://img.shields.io/badge/Python-61.8%25-blue?logo=python)
+![HTML](https://img.shields.io/badge/HTML-32.5%25-orange?logo=html5)
+![CSS](https://img.shields.io/badge/CSS-5.7%25-purple?logo=css3)
